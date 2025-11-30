@@ -1,0 +1,11 @@
+{
+  "label": "Week 4: ROS 2 Part 2",
+  "position": 3,
+  "description": "Services, actions, message types, and launch files",
+  "collapsed": false,
+  "collapsible": true,
+  "link": {
+    "type": "doc",
+    "id": "week-04-ros2-part2/index"
+  }
+}

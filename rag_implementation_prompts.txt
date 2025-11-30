@@ -1,0 +1,102 @@
+/sp.specify
+
+Build an intelligent AI chatbot that helps students learn Physical AI and robotics by answering questions about the textbook content. The chatbot should appear as a floating widget on every page, provide accurate answers with source citations, and support text-selection mode where users can highlight confusing text and ask questions about it specifically.
+
+The chatbot needs to understand the course material (ROS 2, robotics, Physical AI concepts) and provide contextual, educational responses. When a student asks a question, the system should search through the textbook content, find relevant information, and generate a clear answer that includes links back to the specific textbook sections where that information came from.
+
+Students should be able to have multi-turn conversations where the chatbot remembers the context of previous questions. The experience should feel like having a knowledgeable teaching assistant available 24/7 who has read the entire textbook and can explain concepts, provide code examples, and guide students through difficult topics.
+
+The text-selection feature is critical: when students are reading and encounter something confusing, they should be able to simply highlight that text, click a button, and ask "What does this mean?" or "Can you explain this differently?" The chatbot should understand they're asking about the specific highlighted content.
+
+
+
+/sp.clarify
+
+Review the chatbot specification and identify any ambiguous requirements or missing details that need clarification before planning the implementation.
+
+
+/sp.plan
+
+Use the following technical architecture:
+
+Backend:
+- FastAPI (Python 3.11+) for REST API
+- OpenAI text-embedding-3-small for generating embeddings (1536 dimensions)
+- OpenAI GPT-4 Turbo with Agents SDK for generating responses
+- Qdrant Cloud (free tier) as vector database for storing content embeddings
+- Neon Serverless Postgres for storing conversation history
+- RAG pipeline: content ingestion → chunking → embedding → vector search → LLM generation
+
+Frontend:
+- React 18 with TypeScript functional components
+- Embedded directly in existing Docusaurus site
+- Custom CSS modules for styling
+- React hooks for state management (useState, useEffect, useContext)
+- No additional UI libraries - build from scratch
+
+Content Processing:
+- Parse markdown files from docs/ directory (3 chapters from Phase 1)
+- Chunk by headers (h2/h3) with 300-700 token chunks
+- 75 token overlap between chunks to preserve context
+- Preserve code blocks intact (don't split mid-code)
+- Extract metadata: page title, URL, section, week number
+
+Chat Widget Design:
+- Floating button (60x60px) in bottom-right corner
+- Expandable panel (400x600px on desktop, fullscreen on mobile)
+- Smooth slide-in animations
+- Dark/light mode support matching Docusaurus theme
+- Non-intrusive (doesn't block content)
+
+Text Selection:
+- Listen for mouseup/touchend events to detect selection
+- Show tooltip "Ask about this" above selected text
+- Pass selected text as context to chatbot
+- Prioritize chunks from current page in search results
+
+Deployment:
+- Backend on Render free tier
+- Frontend remains on GitHub Pages (existing)
+- CORS configured for cross-origin requests
+- Environment variables for all API keys
+
+Performance targets:
+- Response time: <3 seconds
+- Page load impact: <50ms
+- Mobile responsive
+- Works on all modern browsers
+
+
+/sp.tasks
+
+Break down authentication implementation into atomic tasks including database schema, backend endpoints, frontend forms, profile wizard, dashboard, and integration with existing chatbot.
+
+
+
+/sp.implement
+
+Execute all authentication tasks. Start with database schema extensions, then build backend auth endpoints with security measures, create frontend signup/signin forms with multi-step wizard, build user dashboard, and integrate with existing chatbot.
+
+Use these subagents and skills:
+- /subagent python-expert for auth backend
+- /skill authentication-flow for JWT and password hashing patterns
+- /subagent database-specialist for schema design
+- /skill database-design for Postgres schema
+- /subagent react-developer for auth forms and dashboard
+- /skill react-components for form components
+- /subagent api-architect for secure API design
+
+Priority order:
+1. Extend database schema (users, profiles, progress tables)
+2. Build auth backend (signup, signin, JWT generation, validation)
+3. Create signup wizard (3-step form with validation)
+4. Create signin form
+5. Build user dashboard
+6. Create AuthContext and protected routes
+7. Integrate with chatbot (associate conversations)
+8. Test security thoroughly
+
+Ensure all passwords are hashed, tokens are in HTTP-only cookies, and rate limiting is implemented.
+
+
+

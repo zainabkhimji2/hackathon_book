@@ -1,0 +1,11 @@
+{
+  "label": "Week 1-2: Introduction to Physical AI",
+  "position": 1,
+  "description": "Foundations of embodied intelligence and sensor systems",
+  "collapsed": false,
+  "collapsible": true,
+  "link": {
+    "type": "doc",
+    "id": "week-01-02-intro-physical-ai/index"
+  }
+}

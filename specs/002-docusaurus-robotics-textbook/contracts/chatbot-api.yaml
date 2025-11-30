@@ -1,0 +1,655 @@
+openapi: 3.1.0
+info:
+  title: Physical AI Textbook Chatbot API
+  description: |
+    REST API for RAG-powered chatbot that answers questions about Physical AI and ROS 2 content.
+    This contract defines the interface for Phase 2 chatbot integration.
+  version: 1.0.0
+  contact:
+    name: Physical AI Textbook Team
+    url: https://github.com/username/physical-ai-textbook
+
+servers:
+  - url: https://api.physical-ai-textbook.com/v1
+    description: Production server (Phase 2)
+  - url: http://localhost:8000/v1
+    description: Local development server
+
+tags:
+  - name: Chat
+    description: Chatbot conversation endpoints
+  - name: Content
+    description: Content retrieval and search endpoints
+  - name: Health
+    description: API health and status
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      tags: [Health]
+      operationId: getHealth
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy, degraded, unhealthy]
+                  timestamp:
+                    type: string
+                    format: date-time
+                  version:
+                    type: string
+                    example: "1.0.0"
+                  services:
+                    type: object
+                    properties:
+                      database:
+                        type: string
+                        enum: [up, down]
+                      vector_db:
+                        type: string
+                        enum: [up, down]
+                      llm:
+                        type: string
+                        enum: [up, down]
+
+  /chat:
+    post:
+      summary: Send a message to the chatbot
+      description: |
+        Send a question about Physical AI or ROS 2 content and receive an AI-generated response
+        with citations to relevant textbook sections.
+      tags: [Chat]
+      operationId: sendChatMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+            examples:
+              basic_question:
+                summary: Basic ROS 2 question
+                value:
+                  message: "What is the difference between a ROS 2 topic and a service?"
+                  session_id: "550e8400-e29b-41d4-a716-446655440000"
+              follow_up:
+                summary: Follow-up question
+                value:
+                  message: "Can you show me an example of creating a publisher?"
+                  session_id: "550e8400-e29b-41d4-a716-446655440000"
+                  context:
+                    previous_sections: ["week-03-ros2-part1-02-nodes-topics"]
+      responses:
+        '200':
+          description: Successful response with answer and citations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+              examples:
+                successful_response:
+                  summary: Answer with citations
+                  value:
+                    response: "A ROS 2 topic enables one-way, asynchronous communication where publishers send messages and subscribers receive them without knowing about each other. Topics use a publish-subscribe pattern and are ideal for continuous data streams like sensor readings.\n\nIn contrast, a ROS 2 service provides synchronous, request-reply communication. A client sends a request and waits for a response from the service server. Services are best for occasional operations like triggering actions or querying status."
+                    citations:
+                      - section_id: "week-03-ros2-part1-02-nodes-topics"
+                        title: "Understanding Topics and Messages"
+                        url: "/docs/week-03-ros2-part1/02-nodes-topics#topics"
+                        relevance_score: 0.92
+                      - section_id: "week-04-ros2-part2-01-services-actions"
+                        title: "Services and Actions"
+                        url: "/docs/week-04-ros2-part2/01-services-actions#services"
+                        relevance_score: 0.88
+                    session_id: "550e8400-e29b-41d4-a716-446655440000"
+                    suggested_follow_ups:
+                      - "Show me code example of creating a topic publisher"
+                      - "When should I use actions instead of services?"
+                    tokens_used: 245
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '429':
+          $ref: '#/components/responses/RateLimitExceeded'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /chat/stream:
+    post:
+      summary: Stream chatbot response
+      description: |
+        Send a question and receive streaming response (Server-Sent Events).
+        Enables real-time display of answer as it's generated.
+      tags: [Chat]
+      operationId: streamChatMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: Server-Sent Events stream
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                format: binary
+              example: |
+                data: {"type": "start", "session_id": "550e8400-e29b-41d4-a716-446655440000"}
+
+                data: {"type": "content", "delta": "A ROS 2 topic enables"}
+
+                data: {"type": "content", "delta": " one-way, asynchronous communication"}
+
+                data: {"type": "citation", "citation": {"section_id": "week-03-ros2-part1-02-nodes-topics", "title": "Understanding Topics", "url": "/docs/week-03-ros2-part1/02-nodes-topics", "relevance_score": 0.92}}
+
+                data: {"type": "end", "tokens_used": 245, "suggested_follow_ups": ["Show me code example"]}
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '429':
+          $ref: '#/components/responses/RateLimitExceeded'
+
+  /chat/sessions/{session_id}:
+    get:
+      summary: Retrieve chat session history
+      tags: [Chat]
+      operationId: getChatSession
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Unique session identifier
+      responses:
+        '200':
+          description: Session history retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatSession'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Delete chat session
+      tags: [Chat]
+      operationId: deleteChatSession
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Session deleted successfully
+        '404':
+          description: Session not found
+
+  /content/search:
+    get:
+      summary: Search textbook content
+      description: Semantic search across all textbook sections using vector embeddings
+      tags: [Content]
+      operationId: searchContent
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 3
+            maxLength: 200
+          description: Search query
+          example: "how to create a ROS 2 publisher"
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
+            default: 5
+          description: Maximum number of results
+        - name: chapter
+          in: query
+          schema:
+            type: string
+            enum:
+              - week-01-02-intro-physical-ai
+              - week-03-ros2-part1
+              - week-04-ros2-part2
+          description: Filter by specific chapter
+        - name: difficulty
+          in: query
+          schema:
+            type: string
+            enum: [beginner, intermediate, advanced]
+          description: Filter by difficulty level
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResults'
+              example:
+                results:
+                  - section_id: "week-03-ros2-part1-04-publisher-subscriber"
+                    title: "Publisher-Subscriber Pattern"
+                    chapter: "Week 3: ROS 2 Part 1"
+                    url: "/docs/week-03-ros2-part1/04-publisher-subscriber"
+                    excerpt: "To create a publisher in ROS 2, you use the create_publisher() method..."
+                    relevance_score: 0.95
+                    difficulty: "intermediate"
+                  - section_id: "week-03-ros2-part1-03-first-python-node"
+                    title: "Your First Python ROS 2 Node"
+                    chapter: "Week 3: ROS 2 Part 1"
+                    url: "/docs/week-03-ros2-part1/03-first-python-node"
+                    excerpt: "Let's create a simple publisher node that sends messages..."
+                    relevance_score: 0.87
+                    difficulty: "beginner"
+                total: 2
+                query: "how to create a ROS 2 publisher"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /content/sections/{section_id}:
+    get:
+      summary: Retrieve specific section content
+      tags: [Content]
+      operationId: getSection
+      parameters:
+        - name: section_id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "week-03-ros2-part1-02-nodes-topics"
+      responses:
+        '200':
+          description: Section content retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+        '404':
+          description: Section not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /content/related:
+    get:
+      summary: Find related sections
+      description: Get sections related to a specific section based on semantic similarity
+      tags: [Content]
+      operationId: getRelatedSections
+      parameters:
+        - name: section_id
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "week-03-ros2-part1-02-nodes-topics"
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10
+            default: 3
+      responses:
+        '200':
+          description: Related sections
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  section_id:
+                    type: string
+                  related:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RelatedSection'
+
+components:
+  schemas:
+    ChatRequest:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: User's question or message
+          example: "What is the difference between a topic and a service in ROS 2?"
+        session_id:
+          type: string
+          format: uuid
+          description: Session identifier for conversation continuity (generated if not provided)
+        context:
+          type: object
+          description: Optional context to improve answer quality
+          properties:
+            current_section:
+              type: string
+              description: Section ID user is currently viewing
+              example: "week-03-ros2-part1-02-nodes-topics"
+            previous_sections:
+              type: array
+              items:
+                type: string
+              description: Recently viewed sections
+            difficulty_preference:
+              type: string
+              enum: [beginner, intermediate, advanced]
+
+    ChatResponse:
+      type: object
+      required:
+        - response
+        - session_id
+      properties:
+        response:
+          type: string
+          description: AI-generated answer to user's question
+        citations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Citation'
+          description: Textbook sections referenced in the answer
+        session_id:
+          type: string
+          format: uuid
+        suggested_follow_ups:
+          type: array
+          items:
+            type: string
+          description: Suggested next questions
+          maxItems: 3
+        tokens_used:
+          type: integer
+          description: Number of tokens consumed for this request
+
+    Citation:
+      type: object
+      required:
+        - section_id
+        - title
+        - url
+        - relevance_score
+      properties:
+        section_id:
+          type: string
+          example: "week-03-ros2-part1-02-nodes-topics"
+        title:
+          type: string
+          example: "Understanding Topics and Messages"
+        chapter:
+          type: string
+          example: "Week 3: ROS 2 Part 1"
+        url:
+          type: string
+          format: uri-reference
+          example: "/docs/week-03-ros2-part1/02-nodes-topics"
+        relevance_score:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+          description: Semantic similarity score (0-1)
+        excerpt:
+          type: string
+          description: Relevant excerpt from the section
+
+    ChatSession:
+      type: object
+      required:
+        - session_id
+        - messages
+        - created_at
+      properties:
+        session_id:
+          type: string
+          format: uuid
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatMessage'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        total_tokens:
+          type: integer
+          description: Cumulative tokens used in session
+
+    ChatMessage:
+      type: object
+      required:
+        - role
+        - content
+        - timestamp
+      properties:
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        citations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Citation'
+
+    SearchResults:
+      type: object
+      required:
+        - results
+        - total
+        - query
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchResult'
+        total:
+          type: integer
+          description: Total number of matching results
+        query:
+          type: string
+          description: Original search query
+
+    SearchResult:
+      type: object
+      required:
+        - section_id
+        - title
+        - url
+        - relevance_score
+      properties:
+        section_id:
+          type: string
+        title:
+          type: string
+        chapter:
+          type: string
+        url:
+          type: string
+          format: uri-reference
+        excerpt:
+          type: string
+          description: Relevant excerpt with search terms highlighted
+        relevance_score:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+        difficulty:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        keywords:
+          type: array
+          items:
+            type: string
+
+    Section:
+      type: object
+      required:
+        - section_id
+        - title
+        - content
+        - chapter
+      properties:
+        section_id:
+          type: string
+        title:
+          type: string
+        chapter:
+          type: string
+        content:
+          type: string
+          description: Full markdown content
+        keywords:
+          type: array
+          items:
+            type: string
+        difficulty:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        reading_time:
+          type: integer
+          description: Estimated reading time in minutes
+        prerequisites:
+          type: array
+          items:
+            type: string
+        code_examples:
+          type: array
+          items:
+            $ref: '#/components/schemas/CodeExample'
+
+    CodeExample:
+      type: object
+      required:
+        - language
+        - code
+      properties:
+        language:
+          type: string
+          enum: [python, cpp, bash, yaml, xml]
+        title:
+          type: string
+        code:
+          type: string
+        repository_url:
+          type: string
+          format: uri
+          description: Link to complete runnable version
+
+    RelatedSection:
+      type: object
+      required:
+        - section_id
+        - title
+        - similarity_score
+      properties:
+        section_id:
+          type: string
+        title:
+          type: string
+        chapter:
+          type: string
+        url:
+          type: string
+          format: uri-reference
+        similarity_score:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+        relationship_type:
+          type: string
+          enum: [prerequisite, related-concept, follow-up, example]
+
+    Error:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: "INVALID_REQUEST"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Message cannot be empty"
+        details:
+          type: object
+          description: Additional error details
+
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "INVALID_REQUEST"
+            message: "Message cannot be empty"
+
+    RateLimitExceeded:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "RATE_LIMIT_EXCEEDED"
+            message: "Maximum 10 requests per minute exceeded. Please try again in 30 seconds."
+            details:
+              retry_after: 30
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "INTERNAL_ERROR"
+            message: "An unexpected error occurred. Please try again later."
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for authentication (Phase 3 - when auth is added)
+
+security: []  # No authentication in Phase 1/2, added in Phase 3

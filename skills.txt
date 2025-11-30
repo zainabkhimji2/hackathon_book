@@ -1,0 +1,497 @@
+claude code skill create learning-objectives
+```
+
+### Prompt:
+```
+Generate measurable, actionable learning objectives using Bloom's Taxonomy for technical educational content.
+
+WHAT IT DOES:
+Creates specific learning outcomes that define what students will be able to DO after completing a lesson/module. Uses action verbs from Bloom's Taxonomy (Remember, Understand, Apply, Analyze, Evaluate, Create).
+
+FORMAT:
+"By the end of this [lesson/week/module], students will be able to:
+- [Action verb] + [specific skill/knowledge] + [context/condition]"
+
+EXAMPLES:
+- "Implement a ROS 2 publisher-subscriber node in Python with proper error handling"
+- "Analyze URDF files to identify kinematic chains and joint constraints"
+- "Design a navigation stack for a mobile robot using Nav2 and SLAM"
+
+USE FOR: Planning lessons, designing assessments, creating course overviews, measuring learning outcomes.
+
+
+
+
+claude code skill create concept-scaffolding
+```
+
+### Prompt:
+```
+Break complex technical concepts into progressive, manageable learning steps with logical dependencies.
+
+WHAT IT DOES:
+Decomposes difficult topics into a learning sequence that builds from simple to complex. Identifies prerequisites, creates step-by-step progression, ensures each step is teachable.
+
+APPROACH:
+1. Identify the end goal (complex concept)
+2. Work backwards to find prerequisites
+3. Create 4-7 progressive steps
+4. Ensure each step is concrete and testable
+5. Note cognitive load at each step
+
+EXAMPLE (Humanoid Locomotion):
+Step 1: Basic kinematics (forward/inverse)
+Step 2: Center of mass calculation
+Step 3: Zero Moment Point (ZMP) concept
+Step 4: Static stability vs dynamic stability
+Step 5: Gait generation basics
+Step 6: Balance control loops
+Step 7: Disturbance rejection
+
+USE FOR: Structuring difficult topics, planning lesson sequences, designing progressive exercises.
+
+
+
+claude code skill create code-example-generator
+```
+
+### Prompt:
+```
+Create high-quality, runnable, pedagogically sound code examples for technical textbooks.
+
+WHAT IT DOES:
+Generates complete working code that teaches concepts clearly. Includes all imports, detailed comments, error handling, and expected output.
+
+REQUIREMENTS:
+- Must be complete and runnable (not pseudocode)
+- Include all necessary imports and dependencies
+- Add detailed inline comments explaining logic
+- Use meaningful variable names
+- Follow language best practices
+- Show expected output or behavior
+- Include error handling where appropriate
+- Progress from simple to complex examples
+
+COMMENT STYLE:
+# Step 1: Initialize the ROS 2 node
+# This creates a node named 'velocity_publisher' that will send velocity commands
+
+USE FOR: Creating all code examples in textbook, tutorials, exercises, demonstrations.
+
+
+
+claude code skill create exercise-designer
+```
+
+### Prompt:
+```
+Design effective hands-on practice exercises that reinforce learning objectives and build practical skills.
+
+WHAT IT DOES:
+Creates structured exercises with clear instructions, starter code (if needed), success criteria, and expected outcomes.
+
+EXERCISE COMPONENTS:
+- Objective: What skill this exercise builds
+- Instructions: Step-by-step what to do
+- Starter code/template: Foundation to build on
+- Success criteria: How to know it's correct
+- Expected output: What should happen
+- Extension challenges: For advanced learners
+
+TYPES:
+- Guided Practice: Step-by-step with hints
+- Independent Practice: Apply concepts without guidance
+- Challenge Problems: Integrate multiple concepts
+- Debugging Exercises: Find and fix errors
+- Design Tasks: Create from scratch
+
+USE FOR: End-of-chapter exercises, lab activities, practice problems, skill-building tasks.
+
+
+
+claude code skill create assessment-builder
+```
+
+### Prompt:
+```
+Create comprehensive assessments (quizzes, projects, rubrics) that accurately measure learning outcomes.
+
+WHAT IT DOES:
+Designs multiple-choice questions, short answer questions, coding challenges, and project rubrics aligned with learning objectives.
+
+ASSESSMENT TYPES:
+- Multiple Choice: Test conceptual understanding
+- Short Answer: Test explanation ability
+- Code Completion: Test syntax and logic
+- Debugging: Test error identification
+- Project Rubrics: Evaluate comprehensive work
+
+QUESTION QUALITY:
+- Align directly with learning objectives
+- Test understanding, not memorization
+- Include realistic scenarios
+- Provide clear correct answers
+- Add explanations for why answers are correct/incorrect
+
+RUBRIC FORMAT:
+Criteria | Excellent (4) | Good (3) | Adequate (2) | Needs Work (1)
+
+USE FOR: Weekly quizzes, chapter assessments, project grading, capstone evaluation.
+
+
+
+
+claude code skill create technical-clarity
+```
+
+### Prompt:
+```
+Ensure technical explanations are clear, accessible, and accurate without sacrificing precision.
+
+WHAT IT DOES:
+Reviews and improves technical writing for clarity. Identifies jargon, suggests better explanations, checks readability, ensures logical flow.
+
+CLARITY PRINCIPLES:
+- Define technical terms on first use
+- Use analogies for abstract concepts
+- Break long sentences into shorter ones
+- Use active voice over passive
+- Provide examples after definitions
+- Use bullet points for lists
+- Add diagrams/visuals where helpful (describe them)
+- Maintain consistent terminology
+
+CHECKS:
+✓ Is this understandable to the target audience?
+✓ Are terms defined before use?
+✓ Are sentences concise (<25 words)?
+✓ Is the logic flow clear?
+✓ Are examples concrete and relevant?
+
+USE FOR: Reviewing all written content, improving explanations, making concepts accessible.
+
+
+
+
+claude code skill create book-scaffolding
+```
+
+### Prompt:
+```
+Plan and structure multi-chapter educational books with optimal cognitive load management and learning progression.
+
+WHAT IT DOES:
+Creates complete book structures with chapters, sections, and subsections organized for progressive learning. Manages complexity distribution and ensures prerequisites flow logically.
+
+STRUCTURE ELEMENTS:
+- Part/Section divisions (group related chapters)
+- Chapter organization (week-by-week or topic-based)
+- Learning arc (introduction → mastery)
+- Dependency mapping (what builds on what)
+- Cognitive load distribution (easy → hard → easy)
+- Checkpoint placement (assessments, projects)
+
+BOOK ARCHITECTURE:
+Part I: Foundations (weeks 1-2)
+Part II: Core Skills (weeks 3-7)
+Part III: Advanced Topics (weeks 8-12)
+Part IV: Integration & Capstone (week 13)
+
+USE FOR: Designing overall textbook structure, planning chapter sequences, organizing curriculum.
+
+
+
+
+claude code skill create ai-augmented-teaching
+```
+
+### Prompt:
+```
+Design lessons that effectively integrate AI tools (chatbots, code assistants, personalized tutors) into the learning experience.
+
+WHAT IT DOES:
+Plans how AI features enhance learning without replacing human teaching. Designs chatbot interactions, personalized content paths, and AI-assisted exercises.
+
+AI INTEGRATION TYPES:
+- RAG Chatbot: Answer questions about content
+- Code Assistant: Help debug and explain code
+- Personalized Tutor: Adapt content to background
+- Practice Generator: Create custom exercises
+- Translation: Multi-language support
+
+DESIGN PRINCIPLES:
+- AI augments, doesn't replace learning
+- Encourage critical thinking about AI responses
+- Provide feedback on AI interactions
+- Design for different skill levels
+- Maintain human expert oversight
+
+USE FOR: Designing chatbot features, planning personalization, creating AI-enhanced exercises.
+
+
+
+
+claude code skill create fastapi-development
+```
+
+### Prompt:
+```
+Implement production-ready FastAPI backends with proper structure, validation, error handling, and documentation.
+
+WHAT IT DOES:
+Creates FastAPI applications following best practices: Pydantic models, dependency injection, middleware, async routes, OpenAPI docs.
+
+KEY PATTERNS:
+- Route organization by resource
+- Pydantic models for validation
+- Dependency injection for auth/DB
+- Proper HTTP status codes
+- Error handling with HTTPException
+- CORS middleware
+- Async/await for I/O operations
+- Environment variable configuration
+
+CODE STRUCTURE:
+```python
+from fastapi import FastAPI, HTTPException, Depends
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class ItemCreate(BaseModel):
+    name: str
+    description: str
+
+@app.post("/items/", status_code=201)
+async def create_item(item: ItemCreate):
+    # Implementation
+    return {"id": 1, **item.dict()}
+```
+
+USE FOR: Building all backend APIs, chatbot endpoints, auth routes, RAG pipeline APIs.
+
+
+
+
+claude code skill create rag-pipeline
+```
+
+### Prompt:
+```
+Implement Retrieval-Augmented Generation systems: content ingestion, chunking, embedding, vector search, and LLM generation.
+
+WHAT IT DOES:
+Builds complete RAG pipelines from markdown to chatbot responses. Handles chunking strategies, embedding generation, vector storage, retrieval, and prompt construction.
+
+RAG COMPONENTS:
+1. Content Ingestion: Read files, parse markdown
+2. Chunking: Split by headers, ~500 tokens, overlap
+3. Embedding: OpenAI text-embedding-3-small
+4. Storage: Qdrant with metadata
+5. Retrieval: Vector similarity search (top-k)
+6. Augmentation: Build context-rich prompts
+7. Generation: LLM with retrieved context
+
+CHUNKING STRATEGY:
+- Split on headers (h2, h3)
+- 300-700 token chunks
+- 50-100 token overlap
+- Preserve code blocks intact
+- Include metadata (page, section)
+
+USE FOR: Building the textbook chatbot, implementing Q&A systems, creating semantic search.
+
+
+
+
+claude code skill create react-components
+```
+
+### Prompt:
+```
+Build modern React functional components with TypeScript, hooks, and best practices.
+
+WHAT IT DOES:
+Creates reusable, type-safe React components following modern patterns. Uses hooks, proper state management, error boundaries, accessibility.
+
+COMPONENT PATTERN:
+```typescript
+import React, { useState, useEffect } from 'react';
+
+interface Props {
+  title: string;
+  onSubmit: (data: string) => void;
+}
+
+export const Component: React.FC<Props> = ({ title, onSubmit }) => {
+  const [value, setValue] = useState('');
+  
+  const handleSubmit = () => {
+    onSubmit(value);
+  };
+  
+  return (
+    <div className="container">
+      <h2>{title}</h2>
+      <input 
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        aria-label="Input field"
+      />
+      <button onClick={handleSubmit}>Submit</button>
+    </div>
+  );
+};
+```
+
+USE FOR: Building chat widgets, auth forms, interactive components, UI elements.
+
+
+
+claude code skill create authentication-flow
+```
+
+### Prompt:
+```
+Implement secure authentication systems: JWT tokens, password hashing, session management, protected routes.
+
+WHAT IT DOES:
+Creates complete auth systems with signup, signin, session handling, password security, and route protection.
+
+AUTH COMPONENTS:
+- Password Hashing: bcrypt with salt rounds
+- JWT Generation: Access + refresh tokens
+- Token Validation: Verify signature and expiry
+- Session Management: HTTP-only cookies
+- Protected Routes: Middleware authentication
+- Password Reset: Secure token generation
+
+SECURITY CHECKLIST:
+✓ Hash passwords with bcrypt (12+ rounds)
+✓ Use HTTP-only cookies for tokens
+✓ Implement CSRF protection
+✓ Rate limit auth endpoints
+✓ Validate all inputs
+✓ Use secure session storage
+✓ Implement token refresh
+✓ Log auth events
+
+USE FOR: Building signup/signin, protecting API endpoints, managing user sessions.
+
+
+
+
+claude code skill create database-design
+```
+
+### Prompt:
+```
+Design efficient, normalized database schemas with proper relationships, indexes, and constraints.
+
+WHAT IT DOES:
+Creates PostgreSQL schemas following normalization principles, defines relationships, adds indexes for performance, ensures data integrity.
+
+SCHEMA ELEMENTS:
+- Primary keys (UUID recommended)
+- Foreign keys with proper constraints
+- Indexes on query columns
+- Timestamps (created_at, updated_at)
+- NOT NULL constraints where appropriate
+- UNIQUE constraints for business rules
+- Check constraints for validation
+
+EXAMPLE:
+```sql
+CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_users_email ON users(email);
+```
+
+USE FOR: Designing all database tables, creating schemas, planning data models.
+
+
+
+
+claude code skill create api-integration
+```
+
+### Prompt:
+```
+Connect frontends to backend APIs with proper error handling, loading states, and type safety.
+
+WHAT IT DOES:
+Implements API calls from React to FastAPI with TypeScript types, error handling, loading indicators, and retry logic.
+
+INTEGRATION PATTERN:
+```typescript
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState<string | null>(null);
+
+const fetchData = async () => {
+  setLoading(true);
+  setError(null);
+  try {
+    const response = await fetch('/api/endpoint', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!response.ok) throw new Error('Request failed');
+    const result = await response.json();
+    return result;
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+```
+
+USE FOR: Connecting chat widget to backend, auth API calls, data fetching.
+
+
+
+
+
+claude code skill create github-actions
+```
+
+### Prompt:
+```
+Create CI/CD pipelines for automated testing, building, and deployment using GitHub Actions.
+
+WHAT IT DOES:
+Sets up workflows for: build on push, run tests, deploy to GitHub Pages/Vercel, environment management.
+
+WORKFLOW STRUCTURE:
+```yaml
+name: Deploy Docusaurus
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: npm install
+      - run: npm run build
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+```
+
+USE FOR: Automated deployment, CI/CD setup, testing pipelines.
+
+
+
+
+
+

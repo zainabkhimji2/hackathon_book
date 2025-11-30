@@ -1,0 +1,11 @@
+{
+  "label": "Week 3: ROS 2 Part 1",
+  "position": 2,
+  "description": "ROS 2 architecture, nodes, topics, and first Python program",
+  "collapsed": false,
+  "collapsible": true,
+  "link": {
+    "type": "doc",
+    "id": "week-03-ros2-part1/index"
+  }
+}

@@ -1,0 +1,65 @@
+/**
+ * Physical AI & Humanoid Robotics Textbook - Custom Styles
+ * Robotics-themed color palette with cyan/blue accents
+ */
+
+/* Light Mode - Robotics Theme */
+:root {
+  /* Primary Color: Cyan - Robotics/Tech Feel */
+  --ifm-color-primary: #0ea5e9;
+  --ifm-color-primary-dark: #0284c7;
+  --ifm-color-primary-darker: #0369a1;
+  --ifm-color-primary-darkest: #075985;
+  --ifm-color-primary-light: #38bdf8;
+  --ifm-color-primary-lighter: #7dd3fc;
+  --ifm-color-primary-lightest: #bae6fd;
+
+  /* Secondary Color: Slate - Professional */
+  --ifm-color-secondary: #1e293b;
+
+  /* Background */
+  --ifm-background-color: #ffffff;
+
+  /* Typography */
+  --ifm-font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
+  --ifm-code-font-size: 95%;
+  --ifm-line-height-base: 1.6;
+
+  /* Code Highlighting */
+  --docusaurus-highlighted-code-line-bg: rgba(14, 165, 233, 0.1);
+}
+
+/* Dark Mode - Enhanced Robotics Theme */
+[data-theme='dark'] {
+  /* Primary Color: Lighter Cyan for Dark Background */
+  --ifm-color-primary: #38bdf8;
+  --ifm-color-primary-dark: #0ea5e9;
+  --ifm-color-primary-darker: #0284c7;
+  --ifm-color-primary-darkest: #0369a1;
+  --ifm-color-primary-light: #7dd3fc;
+  --ifm-color-primary-lighter: #bae6fd;
+  --ifm-color-primary-lightest: #e0f2fe;
+
+  /* Background: Deep Slate */
+  --ifm-background-color: #0f172a;
+  --ifm-background-surface-color: #1e293b;
+
+  /* Code Highlighting */
+  --docusaurus-highlighted-code-line-bg: rgba(56, 189, 248, 0.15);
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+  .prism-code {
+    font-size: 14px;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.5rem; }
+
+  .pagination-nav {
+    flex-direction: column;
+  }
+}
