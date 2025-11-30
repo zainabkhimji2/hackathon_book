@@ -1,0 +1,122 @@
+/sp.specify
+
+Build a complete user authentication system with signup and signin functionality that captures detailed user profiles during registration. When users sign up, they should answer questions about their background (software engineer, hardware engineer, student, or other), programming experience level (beginner, intermediate, advanced), robotics experience (none, hobby, professional), and which technologies they're familiar with (Python, C++, ROS, Linux).
+
+The system needs secure authentication using JWT tokens stored in HTTP-only cookies, password hashing with bcrypt, and proper session management. Users should be able to sign up with email and password, sign in to existing accounts, view and edit their profiles, and sign out securely.
+
+The signup flow should feel welcoming and educational, not overwhelming. Use a multi-step wizard that guides users through profile creation: Step 1 is basic info (name, email, password), Step 2 asks about their background and experience, and Step 3 asks about skills and learning goals. This information will be used later for content personalization.
+
+The system should include a user dashboard where students can see their learning progress through the course, view their saved conversations with the chatbot, and update their profile information. All user data must be stored securely in Neon Postgres with proper relationships between users, profiles, and chatbot conversations.
+
+Authentication should work seamlessly with the existing chatbot from Phase 2 - logged-in users' conversations should be associated with their accounts, while anonymous users can still use the chatbot but conversations aren't saved permanently.
+
+
+
+/sp.plan
+
+Use the following technical architecture:
+
+Authentication Backend:
+- Better-auth library or custom JWT implementation in FastAPI
+- bcrypt for password hashing (12+ salt rounds)
+- JWT tokens with 7-day expiration
+- HTTP-only cookies for token storage (no localStorage)
+- Refresh token mechanism for extended sessions
+- CSRF protection for state-changing operations
+
+Database Schema (Neon Postgres):
+- users table: id, email, password_hash, name, email_verified, created_at
+- user_profiles table: user_id, background, programming_level, robotics_experience, familiar_with (array), learning_goals
+- user_progress table: user_id, week, chapter, completed, last_accessed
+- Update conversations table: add user_id foreign key
+
+Frontend Components:
+- SignupForm: Multi-step wizard (3 steps)
+- SigninForm: Email/password with "remember me"
+- ProfileSetup: Background questions and skill selection
+- UserDashboard: Progress overview, saved chats, profile management
+- AuthContext: React context for global auth state
+- ProtectedRoute: Wrapper for auth-required pages
+
+API Endpoints:
+- POST /api/auth/signup: Create account with profile data
+- POST /api/auth/signin: Authenticate and return token
+- POST /api/auth/signout: Invalidate session
+- GET /api/auth/me: Get current user profile
+- PUT /api/auth/profile: Update user profile
+- GET /api/auth/progress: Get learning progress
+- POST /api/auth/progress/mark-complete: Mark chapter complete
+
+Profile Setup Flow:
+1. Step 1: Name, email, password (with strength indicator)
+2. Step 2: Dropdown for background, radio buttons for experience levels
+3. Step 3: Multi-select checkboxes for skills, textarea for learning goals
+4. Progress indicator showing current step (1 of 3, 2 of 3, 3 of 3)
+5. Validation at each step before allowing next
+
+Security Measures:
+- Rate limiting: 5 failed login attempts per minute
+- Input validation: Email format, password strength (8+ chars, uppercase, lowercase, number)
+- SQL injection prevention: Parameterized queries
+- XSS prevention: Sanitize all inputs
+- Password reset flow (email-based)
+
+Integration with Existing Chatbot:
+- Update chatbot API to accept optional Authorization header
+- Associate conversations with user_id if authenticated
+- Anonymous users: conversations not persisted long-term
+- Logged-in users: full conversation history saved
+
+Dashboard Features:
+- Progress tracking: Show % complete for each week
+- Last accessed: Show when each chapter was last viewed
+- Saved conversations: List with timestamps, preview, and delete option
+- Profile editing: Update background, skills, goals
+
+Deployment:
+- Extend existing FastAPI backend (no new deployment)
+- Add auth routes to existing Render deployment
+- Frontend integrated into Docusaurus
+
+Success metrics:
+- Signup completion rate >80%
+- Signin success rate >95%
+- No security vulnerabilities
+- Profile data captured accurately
+
+
+
+/sp.tasks
+
+Break down authentication implementation into atomic tasks including database schema, backend endpoints, frontend forms, profile wizard, dashboard, and integration with existing chatbot.
+
+
+
+
+/sp.implement
+
+Execute all authentication tasks. Start with database schema extensions, then build backend auth endpoints with security measures, create frontend signup/signin forms with multi-step wizard, build user dashboard, and integrate with existing chatbot.
+
+Use these subagents and skills:
+- /subagent python-expert for auth backend
+- /skill authentication-flow for JWT and password hashing patterns
+- /subagent database-specialist for schema design
+- /skill database-design for Postgres schema
+- /subagent react-developer for auth forms and dashboard
+- /skill react-components for form components
+- /subagent api-architect for secure API design
+
+Priority order:
+1. Extend database schema (users, profiles, progress tables)
+2. Build auth backend (signup, signin, JWT generation, validation)
+3. Create signup wizard (3-step form with validation)
+4. Create signin form
+5. Build user dashboard
+6. Create AuthContext and protected routes
+7. Integrate with chatbot (associate conversations)
+8. Test security thoroughly
+
+Ensure all passwords are hashed, tokens are in HTTP-only cookies, and rate limiting is implemented.
+
+
+
